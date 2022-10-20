@@ -6,7 +6,10 @@ import java.io.PrintWriter;
 
 public class RootController {
     public static Handler welcome = ctx -> {
-        PrintWriter printWriter = ctx.res.getWriter();
-        printWriter.write("Hello World");
+        ctx.render("index.html");
+    };
+
+    public static Handler about = ctx -> {
+        ctx.render("about.html");
     };
 }

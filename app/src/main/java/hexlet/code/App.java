@@ -1,6 +1,7 @@
 package hexlet.code;
 
 import hexlet.code.controllers.RootController;
+import hexlet.code.controllers.UrlController;
 import io.javalin.Javalin;
 import io.javalin.plugin.rendering.template.JavalinThymeleaf;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
@@ -8,10 +9,22 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
+import static io.javalin.apibuilder.ApiBuilder.path;
+import static io.javalin.apibuilder.ApiBuilder.post;
+import static io.javalin.apibuilder.ApiBuilder.get;
+
 public class App {
     private static int getPort() {
         String port = System.getenv().getOrDefault("PORT", "5000");
         return Integer.valueOf(port);
+    }
+
+    private static String getMode() {
+        return System.getenv().getOrDefault("APP_ENV", "development");
+    }
+
+    private static boolean isProduction() {
+        return getMode().equals("production");
     }
 
     // Javalin поддерживает работу с шаблонизатором thymeleaf
@@ -36,24 +49,29 @@ public class App {
 
     // Метод добавляет маршруты в переданное приложение
     private static void addRoutes(Javalin app) {
-        // Для GET-запроса на маршрут / будет выполняться
-        // обработчик welcome в контроллере RootController
+
         app.get("/", RootController.welcome);
+        app.get("/about", RootController.about);
 
-        // При помощи методов routes() и path() маршруты можно группировать
-
-        // BEGIN
-
-        // END
+        app.routes(() -> {
+            path("urls", () -> {
+                get(UrlController.listUrls);
+                post(UrlController.createUrl);
+                path("{id}", () -> {
+                    get(UrlController.showUrl);
+                });
+            });
+        });
     }
 
     public static Javalin getApp() {
 
         // Создаём приложение
         Javalin app = Javalin.create(config -> {
-            // Включаем логгирование
-            config.enableDevLogging();
-            // Подключаем настроенный шаблонизатор к фреймворку
+            if (!isProduction()) {
+                config.enableDevLogging();
+            }
+            config.enableWebjars();
             JavalinThymeleaf.configure(getTemplateEngine());
         });
 
