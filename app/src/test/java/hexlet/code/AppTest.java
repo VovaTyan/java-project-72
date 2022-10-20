@@ -1,7 +1,5 @@
 package hexlet.code;
 
-import hexlet.code.domain.Url;
-import hexlet.code.domain.query.QUrl;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +14,8 @@ import io.javalin.Javalin;
 import io.ebean.DB;
 import io.ebean.Database;
 
+import hexlet.code.domain.Url;
+import hexlet.code.domain.query.QUrl;
 class AppTest {
 
     @Test
@@ -25,7 +25,6 @@ class AppTest {
 
     private static Javalin app;
     private static String baseUrl;
-    private static Url existingArticle;
     private static Database database;
 
     @BeforeAll
@@ -57,14 +56,14 @@ class AppTest {
         void testIndex() {
             HttpResponse<String> response = Unirest.get(baseUrl).asString();
             assertThat(response.getStatus()).isEqualTo(200);
-            assertThat(response.getBody()).contains("Привет от Хекслета!");
+            assertThat(response.getBody()).contains("Анализатор страниц");
         }
 
         @Test
         void testAbout() {
             HttpResponse<String> response = Unirest.get(baseUrl + "/about").asString();
             assertThat(response.getStatus()).isEqualTo(200);
-            assertThat(response.getBody()).contains("Эксперименты с Javalin на Хекслете");
+            assertThat(response.getBody()).contains("Приложения для анализа страниц");
         }
     }
 
@@ -74,78 +73,52 @@ class AppTest {
         @Test
         void testIndex() {
             HttpResponse<String> response = Unirest
-                .get(baseUrl + "/articles")
+                .get(baseUrl + "/urls")
                 .asString();
             String body = response.getBody();
 
             assertThat(response.getStatus()).isEqualTo(200);
-            assertThat(body).contains("The Man Within");
-            assertThat(body).contains("Consider the Lilies");
+            assertThat(body).contains("https://www.example1.com");
+            assertThat(body).contains("https://www.example2.com");
         }
 
         @Test
         void testShow() {
             HttpResponse<String> response = Unirest
-                .get(baseUrl + "/articles/1")
+                .get(baseUrl + "/urls/1")
                 .asString();
             String body = response.getBody();
 
             assertThat(response.getStatus()).isEqualTo(200);
-            assertThat(body).contains("The Man Within");
-            assertThat(body).contains("Every flight begins with a fall");
-        }
-
-        @Test
-        void testNew() {
-            HttpResponse<String> response = Unirest
-                .get(baseUrl + "/articles/new")
-                .asString();
-            String body = response.getBody();
-
-            assertThat(response.getStatus()).isEqualTo(200);
+            assertThat(body).contains("https://www.example1.com");
         }
 
         @Test
         void testCreate() {
-            String inputName = "new name";
-            String inputDescription = "new description";
+            String inputName = "https://www.example.com";
             HttpResponse<String> responsePost = Unirest
-                .post(baseUrl + "/articles")
+                .post(baseUrl + "/urls")
                 .field("name", inputName)
-                .field("description", inputDescription)
                 .asEmpty();
 
             assertThat(responsePost.getStatus()).isEqualTo(302);
-            assertThat(responsePost.getHeaders().getFirst("Location")).isEqualTo("/articles");
+            assertThat(responsePost.getHeaders().getFirst("Location")).isEqualTo("/urls");
 
             HttpResponse<String> response = Unirest
-                .get(baseUrl + "/articles")
+                .get(baseUrl + "/urls")
                 .asString();
             String body = response.getBody();
 
             assertThat(response.getStatus()).isEqualTo(200);
             assertThat(body).contains(inputName);
-            assertThat(body).contains("Статья успешно создана");
+            assertThat(body).contains("Страница успешно добавлена");
 
-            Url actualArticle = new QUrl()
+            Url actualUrl = new QUrl()
                 .name.equalTo(inputName)
                 .findOne();
 
-            assertThat(actualArticle).isNotNull();
-            assertThat(actualArticle.getName()).isEqualTo(inputName);
-        }
-
-        @Test
-        void testSearch() {
-            var queryString = "?term=man";
-            HttpResponse<String> response = Unirest
-                .get(baseUrl + "/articles" + queryString)
-                .asString();
-            String body = response.getBody();
-            System.out.println(body);
-            assertThat(response.getStatus()).isEqualTo(200);
-            assertThat(body).contains("The Man Within");
-            assertThat(body).doesNotContain("Consider the Lilies");
+            assertThat(actualUrl).isNotNull();
+            assertThat(actualUrl.getName()).isEqualTo(inputName);
         }
     }
 }
