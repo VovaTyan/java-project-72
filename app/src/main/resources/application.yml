@@ -12,7 +12,7 @@ datasource:
 ebean:
   ddl:
     run: true
-    #generate: true
-   # seedSql: seed.sql
+    generate: true
+    seedSql: seed.sql
   # migration:
   #   run: true

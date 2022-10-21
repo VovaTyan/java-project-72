@@ -1,20 +1,22 @@
 package hexlet.code.controllers;
 
+import hexlet.code.domain.Url;
 import hexlet.code.domain.UrlCheck;
+import hexlet.code.domain.query.QUrl;
+import hexlet.code.domain.query.QUrlCheck;
+import io.ebean.PagedList;
 import io.javalin.http.Handler;
 import io.javalin.http.NotFoundResponse;
-import io.ebean.PagedList;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.Instant;
 import java.util.List;
-import java.util.stream.IntStream;
+import java.util.Objects;
 import java.util.stream.Collectors;
-import java.net.URL;
-
-import hexlet.code.domain.Url;
-import hexlet.code.domain.query.QUrl;
-
+import java.util.stream.IntStream;
 public final class UrlController {
 
     public static Handler listUrls = ctx -> {
@@ -39,7 +41,7 @@ public final class UrlController {
                 .boxed()
                 .collect(Collectors.toList());
         Instant lastCheckedCreatedAt = null;
-        String lastCheckedStatusCode = "";
+        String lastCheckedStatusCode = " ";
 
         for (Url url : urls) {
             if (!url.getUrlChecks().toString().contains("deferred")) {
@@ -113,8 +115,21 @@ public final class UrlController {
         if (url == null) {
             throw new NotFoundResponse();
         }
+        Document document = Jsoup.connect(url.getName()).get();
+
+        int statusCode = document.connection().response().statusCode();
+        String title = document.title();
+        String h1 = Objects.requireNonNull(document.select("h1").first()).text();
+        String description = document.select("description").size() > 0
+                ? document.select("description").first().text() : "";
+
+        UrlCheck urlCheck = new UrlCheck(statusCode, title, h1, description, url);
+        urlCheck.save();
+
+        List<UrlCheck> urlChecks = new QUrlCheck().findList();
 
         ctx.attribute("url", url);
+        ctx.attribute("urlChecks", urlChecks);
         ctx.render("urls/show.html");
     };
 }

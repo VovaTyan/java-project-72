@@ -2,13 +2,10 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.w3.org/1999/xhtml"
       layout:decorate="~{layouts/application.html}">
 
-<section layout:fragment="header">
-    Просмотр статьи
-</section>
 
 <section layout:fragment="content" th:object="${url}">
     <div class="container-lg mt-5">
-        <h1 th:text="*{getName()}"></h1>
+        <h1 th:text="*{'Сайт ' + getName()}"></h1>
 
         <table class="table table-bordered table-hover mt-3">
             <tbody>
@@ -42,7 +39,14 @@
             <th class="col-2">Дата проверки</th>
             </thead>
             <tbody>
-
+            <tr th:each="urlCheck : ${urlChecks}" th:object="${urlCheck}">
+                <td th:text="*{getId()}"></td>
+                <td th:text="*{getStatusCode()}"></td>
+                <td th:text="*{getTitle()}"></td>
+                <td th:text="*{getH1()}"></td>
+                <td th:text="*{getDescription()}"></td>
+                <td th:text="*{#temporals.format(getCreatedAt(), 'dd/MM/yyyy HH:mm')}"></td>
+            </tr>
             </tbody>
         </table>
     </div>

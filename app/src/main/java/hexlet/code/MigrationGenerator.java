@@ -2,8 +2,8 @@ package hexlet.code;
 
 import io.ebean.annotation.Platform;
 import io.ebean.dbmigration.DbMigration;
-import java.io.IOException;
 
+import java.io.IOException;
 public final class MigrationGenerator {
 
     public static void main(String[] args) throws IOException {
