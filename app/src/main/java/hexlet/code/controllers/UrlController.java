@@ -14,7 +14,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Instant;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 public final class UrlController {
@@ -41,13 +40,13 @@ public final class UrlController {
                 .boxed()
                 .collect(Collectors.toList());
         Instant lastCheckedCreatedAt = null;
-        String lastCheckedStatusCode = " ";
+        String lastCheckedStatusCode = "";
 
         for (Url url : urls) {
-            if (!url.getUrlChecks().toString().contains("deferred")) {
-                lastCheckedCreatedAt = url.getUrlChecks().get(url.getUrlChecks().size()).getCreatedAt();
+            if (!url.getUrlChecks().isEmpty()) {
+                lastCheckedCreatedAt = url.getUrlChecks().get(url.getUrlChecks().size() - 1).getCreatedAt();
                 lastCheckedStatusCode = Integer
-                        .toString(url.getUrlChecks().get(url.getUrlChecks().size()).getStatusCode());
+                        .toString(url.getUrlChecks().get(url.getUrlChecks().size() - 1).getStatusCode());
             }
         }
 
@@ -119,7 +118,7 @@ public final class UrlController {
 
         int statusCode = document.connection().response().statusCode();
         String title = document.title();
-        String h1 = Objects.requireNonNull(document.select("h1").first()).text();
+        String h1 = document.select("h1").size() > 0 ? document.select("h1").first().text() : "";
         String description = document.select("description").size() > 0
                 ? document.select("description").first().text() : "";
 
@@ -127,6 +126,8 @@ public final class UrlController {
         urlCheck.save();
 
         List<UrlCheck> urlChecks = new QUrlCheck().findList();
+
+        url.setUrlChecks(urlChecks);
 
         ctx.attribute("url", url);
         ctx.attribute("urlChecks", urlChecks);

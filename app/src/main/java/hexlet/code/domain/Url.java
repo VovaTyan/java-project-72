@@ -1,15 +1,15 @@
 package hexlet.code.domain;
 
 import io.ebean.Model;
+import io.ebean.annotation.WhenCreated;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
-
-import io.ebean.annotation.WhenCreated;
 
 @Entity
 public final class Url extends Model {
@@ -22,7 +22,7 @@ public final class Url extends Model {
     @WhenCreated
     private Instant createdAt;
     @OneToMany(cascade = CascadeType.ALL)
-    private List<UrlCheck> urlChecks;
+    private List<UrlCheck> urlChecks = new ArrayList<>();
 
     public Url(String name) {
         this.name = name;
@@ -42,5 +42,9 @@ public final class Url extends Model {
 
     public List<UrlCheck> getUrlChecks() {
         return urlChecks;
+    }
+
+    public void setUrlChecks(List<UrlCheck> urlChecks) {
+        this.urlChecks = urlChecks;
     }
 }
