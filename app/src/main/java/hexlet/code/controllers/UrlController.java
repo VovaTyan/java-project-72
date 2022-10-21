@@ -1,10 +1,12 @@
 package hexlet.code.controllers;
 
+import hexlet.code.domain.UrlCheck;
 import io.javalin.http.Handler;
 import io.javalin.http.NotFoundResponse;
 import io.ebean.PagedList;
 
 import java.net.MalformedURLException;
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Collectors;
@@ -36,7 +38,20 @@ public final class UrlController {
                 .range(1, lastPage)
                 .boxed()
                 .collect(Collectors.toList());
+        Instant lastCheckedCreatedAt = null;
+        String lastCheckedStatusCode = "";
 
+        for (Url url : urls) {
+            if (!url.getUrlChecks().toString().contains("deferred")) {
+                lastCheckedCreatedAt = url.getUrlChecks().get(url.getUrlChecks().size()).getCreatedAt();
+                lastCheckedStatusCode = Integer
+                        .toString(url.getUrlChecks().get(url.getUrlChecks().size()).getStatusCode());
+            }
+        }
+
+
+        ctx.attribute("lastCheckedCreatedAt", lastCheckedCreatedAt);
+        ctx.attribute("lastCheckedStatusCode", lastCheckedStatusCode);
         ctx.attribute("urls", urls);
         ctx.attribute("term", term);
         ctx.attribute("pages", pages);
@@ -75,6 +90,20 @@ public final class UrlController {
     };
 
     public static Handler showUrl = ctx -> {
+        int id = ctx.pathParamAsClass("id", Integer.class).getOrDefault(null);
+
+        Url url = new QUrl()
+                .id.equalTo(id)
+                .findOne();
+
+        if (url == null) {
+            throw new NotFoundResponse();
+        }
+
+        ctx.attribute("url", url);
+        ctx.render("urls/show.html");
+    };
+    public static Handler checks = ctx -> {
         int id = ctx.pathParamAsClass("id", Integer.class).getOrDefault(null);
 
         Url url = new QUrl()
