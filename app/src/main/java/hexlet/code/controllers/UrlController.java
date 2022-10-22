@@ -20,7 +20,7 @@ public final class UrlController {
     public static Handler listUrls = ctx -> {
         String term = ctx.queryParamAsClass("term", String.class).getOrDefault("");
         int page = ctx.queryParamAsClass("page", Integer.class).getOrDefault(1) - 1;
-        int rowsPerPage = 10;
+        int rowsPerPage = 15;
 
         PagedList<Url> pagedUrls = new QUrl()
                 .name.icontains(term)

@@ -1,21 +1,19 @@
 package hexlet.code;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-import kong.unirest.HttpResponse;
-import kong.unirest.Unirest;
-import io.javalin.Javalin;
-import io.ebean.DB;
-import io.ebean.Database;
-
 import hexlet.code.domain.Url;
 import hexlet.code.domain.query.QUrl;
+import io.ebean.DB;
+import io.ebean.Database;
+import io.javalin.Javalin;
+import kong.unirest.HttpResponse;
+import kong.unirest.Unirest;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import org.junit.jupiter.api.*;
+
+import java.io.IOException;
+
+import static org.assertj.core.api.Assertions.assertThat;
 class AppTest {
 
     @Test
@@ -45,7 +43,7 @@ class AppTest {
     // Но хорошей практикой будет возвращать базу данных между тестами в исходное состояние
     @BeforeEach
     void beforeEach() {
-        database.script().run("/truncate.sql");
+       // database.script().run("/truncate.sql");
         database.script().run("/seed-test-db.sql");
     }
 
@@ -63,7 +61,7 @@ class AppTest {
         void testAbout() {
             HttpResponse<String> response = Unirest.get(baseUrl + "/about").asString();
             assertThat(response.getStatus()).isEqualTo(200);
-            assertThat(response.getBody()).contains("Приложения для анализа страниц");
+            assertThat(response.getBody()).contains("Приложения для SEO анализа сайтов");
         }
     }
 
@@ -119,6 +117,25 @@ class AppTest {
 
             assertThat(actualUrl).isNotNull();
             assertThat(actualUrl.getName()).isEqualTo(inputName);
+        }
+
+        @Test
+        void testChecks() throws IOException {
+            MockWebServer server = new MockWebServer();
+
+            MockResponse mockResponse = new MockResponse()
+                    .addHeader("Content-Type", "text/html; charset=utf-8")
+                    .addHeader("title", "Title")
+                    .setBody("hello");
+            server.enqueue(mockResponse);
+            server.start(5000);
+
+            assertThat(server.url("/").toString()).isEqualTo("http://localhost:5000/");
+            assertThat(mockResponse.getStatus()).contains("200");
+            assertThat(mockResponse.getHeaders().get("title")).isEqualTo("Title");
+            assertThat(mockResponse.getBody().readUtf8()).isEqualTo("hello");
+
+            server.shutdown();
         }
     }
 }
