@@ -1,10 +1,13 @@
 package hexlet.code.domain;
 
 import io.ebean.Model;
-
-import javax.persistence.*;
-import java.time.Instant;
 import io.ebean.annotation.WhenCreated;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import java.time.Instant;
 
 
 @Entity

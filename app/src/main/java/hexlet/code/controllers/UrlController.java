@@ -52,7 +52,6 @@ public final class UrlController {
 
 
         ctx.attribute("lastCheckedCreatedAt", lastCheckedCreatedAt);
-        ctx.attribute("lastCheckedStatusCode", lastCheckedStatusCode);
         ctx.attribute("urls", urls);
         ctx.attribute("term", term);
         ctx.attribute("pages", pages);
@@ -101,7 +100,14 @@ public final class UrlController {
             throw new NotFoundResponse();
         }
 
+        List<UrlCheck> urlChecks = new QUrlCheck()
+                .url.equalTo(url)
+                .findList();
+
+        url.setUrlChecks(urlChecks);
+
         ctx.attribute("url", url);
+        ctx.attribute("urlChecks", urlChecks);
         ctx.render("urls/show.html");
     };
     public static Handler checks = ctx -> {
@@ -125,7 +131,9 @@ public final class UrlController {
         UrlCheck urlCheck = new UrlCheck(statusCode, title, h1, description, url);
         urlCheck.save();
 
-        List<UrlCheck> urlChecks = new QUrlCheck().findList();
+        List<UrlCheck> urlChecks = new QUrlCheck()
+                .url.equalTo(url)
+                .findList();
 
         url.setUrlChecks(urlChecks);
 

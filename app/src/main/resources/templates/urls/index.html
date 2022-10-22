@@ -22,8 +22,12 @@
             <td>
                 <a th:href="@{/urls/{id}(id=*{getId()})}" th:text="${#strings.abbreviate(url.getName(), 30)}"></a>
             </td>
-            <td th:text="${#temporals.format(lastCheckedCreatedAt, 'dd/MM/yyyy HH:mm')}"></td>
-            <td th:text="${lastCheckedStatusCode}"></td>
+            <td th:text="*{#temporals.format(
+            #lists.size(getUrlChecks) > 0
+            ? getUrlChecks.get(#lists.size(getUrlChecks) - 1).getCreatedAt() : null
+            , 'dd/MM/yyyy HH:mm')}"></td>
+            <td th:text="*{#lists.size(getUrlChecks) > 0
+            ? getUrlChecks.get(#lists.size(getUrlChecks) - 1).getStatusCode() : ''}"></td>
         </tr>
         </tbody>
     </table>
