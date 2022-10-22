@@ -19,7 +19,7 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
       - name: Build with Gradle
-        run: make build
+        run: app/make build
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v3.0.0
         if: ${{ github.event_name == 'push' }}
