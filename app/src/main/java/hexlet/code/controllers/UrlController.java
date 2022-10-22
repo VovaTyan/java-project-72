@@ -12,7 +12,6 @@ import org.jsoup.nodes.Document;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -39,19 +38,7 @@ public final class UrlController {
                 .range(1, lastPage)
                 .boxed()
                 .collect(Collectors.toList());
-        Instant lastCheckedCreatedAt = null;
-        String lastCheckedStatusCode = "";
 
-        for (Url url : urls) {
-            if (!url.getUrlChecks().isEmpty()) {
-                lastCheckedCreatedAt = url.getUrlChecks().get(url.getUrlChecks().size() - 1).getCreatedAt();
-                lastCheckedStatusCode = Integer
-                        .toString(url.getUrlChecks().get(url.getUrlChecks().size() - 1).getStatusCode());
-            }
-        }
-
-
-        ctx.attribute("lastCheckedCreatedAt", lastCheckedCreatedAt);
         ctx.attribute("urls", urls);
         ctx.attribute("term", term);
         ctx.attribute("pages", pages);
