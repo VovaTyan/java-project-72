@@ -115,6 +115,32 @@ class AppTest {
             assertThat(actualUrl).isNotNull();
             assertThat(actualUrl.getName()).isEqualTo(inputName);
         }
+        @Test
+        void testCreateNotCorrect() {
+            String inputName = "www.example.com";
+            HttpResponse<String> responsePost = Unirest
+                    .post(baseUrl + "/urls")
+                    .field("name", inputName)
+                    .asEmpty();
+
+            assertThat(responsePost.getStatus()).isEqualTo(302);
+            assertThat(responsePost.getHeaders().getFirst("Location")).isEqualTo("/");
+
+            HttpResponse<String> response = Unirest
+                    .get(baseUrl + "/")
+                    .asString();
+            String body = response.getBody();
+
+            assertThat(response.getStatus()).isEqualTo(200);
+            assertThat(body).contains(inputName);
+            assertThat(body).contains("Некорректный URL");
+
+            Url actualUrl = new QUrl()
+                    .name.equalTo(inputName)
+                    .findOne();
+
+            assertThat(actualUrl).isNull();
+        }
 /*
         @Test
         void testChecks() throws IOException {
