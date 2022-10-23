@@ -1,17 +1,22 @@
 package hexlet.code;
 
 import hexlet.code.domain.Url;
+import hexlet.code.domain.UrlCheck;
 import hexlet.code.domain.query.QUrl;
 import io.ebean.DB;
 import io.ebean.Database;
 import io.javalin.Javalin;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 class AppTest {
@@ -169,25 +174,40 @@ class AppTest {
             assertThat(actualUrl).isNotNull();
             assertThat(actualUrl.getName()).isEqualTo(inputName);
         }
-/*
+
         @Test
         void testChecks() throws IOException {
             MockWebServer server = new MockWebServer();
-
             MockResponse mockResponse = new MockResponse()
                     .addHeader("Content-Type", "text/html; charset=utf-8")
                     .addHeader("title", "Title")
                     .setBody("hello");
             server.enqueue(mockResponse);
-            server.start(5000);
+            server.start(6000);
 
-            assertThat(server.url("/").toString()).isEqualTo("http://localhost:5000/");
-            assertThat(mockResponse.getStatus()).contains("200");
-            assertThat(mockResponse.getHeaders().get("title")).isEqualTo("Title");
-            assertThat(mockResponse.getBody().readUtf8()).isEqualTo("hello");
+
+            String nameUrl = server.url("/").toString();
+            Url url = new Url(nameUrl);
+            url.save();
+
+            UrlCheck urlCheck = new UrlCheck(200, "Title", "", "hello", url);
+            urlCheck.save();
+
+            Url urlTest = new QUrl()
+                    .name.equalTo(nameUrl)
+                    .findOne();
+
+            String numberUrl = Long.toString(urlTest.getId());
+
+            HttpResponse<String> response = Unirest
+                    .post(baseUrl + "/urls/" + numberUrl)
+                    .asString();
+            String body = response.getBody();
+
+            assertThat(body).contains(mockResponse.getHeaders().get("title"));
+            assertThat(body).contains(mockResponse.getBody().readUtf8());
 
             server.shutdown();
         }
- */
     }
 }
