@@ -1,5 +1,7 @@
 package hexlet.code;
 
+import hexlet.code.domain.Url;
+import hexlet.code.domain.query.QUrl;
 import io.ebean.DB;
 import io.ebean.Database;
 import io.javalin.Javalin;
@@ -86,7 +88,6 @@ class AppTest {
             assertThat(response.getStatus()).isEqualTo(200);
             assertThat(body).contains("https://www.example1.com");
         }
-/*
         @Test
         void testCreate() {
             String inputName = "https://www.example.com";
@@ -114,7 +115,7 @@ class AppTest {
             assertThat(actualUrl).isNotNull();
             assertThat(actualUrl.getName()).isEqualTo(inputName);
         }
-
+/*
         @Test
         void testChecks() throws IOException {
             MockWebServer server = new MockWebServer();
