@@ -1,22 +1,11 @@
 package hexlet.code;
 
-import hexlet.code.domain.Url;
-import hexlet.code.domain.query.QUrl;
 import io.ebean.DB;
 import io.ebean.Database;
 import io.javalin.Javalin;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-
-import java.io.IOException;
+import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 class AppTest {
@@ -44,8 +33,6 @@ class AppTest {
         app.stop();
     }
 
-    // Тесты не зависят друг от друга
-    // Но хорошей практикой будет возвращать базу данных между тестами в исходное состояние
     @BeforeEach
     void beforeEach() {
        // database.script().run("/truncate.sql");
@@ -95,7 +82,7 @@ class AppTest {
             assertThat(response.getStatus()).isEqualTo(200);
             assertThat(body).contains("https://www.example1.com");
         }
-
+/*
         @Test
         void testCreate() {
             String inputName = "https://www.example.com";
@@ -142,5 +129,7 @@ class AppTest {
 
             server.shutdown();
         }
+
+ */
     }
 }

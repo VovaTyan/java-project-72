@@ -97,6 +97,7 @@ public final class UrlController {
         ctx.attribute("urlChecks", urlChecks);
         ctx.render("urls/show.html");
     };
+
     public static Handler checks = ctx -> {
         int id = ctx.pathParamAsClass("id", Integer.class).getOrDefault(null);
 
