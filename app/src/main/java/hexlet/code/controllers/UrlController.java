@@ -20,7 +20,7 @@ public final class UrlController {
     public static Handler listUrls = ctx -> {
         String term = ctx.queryParamAsClass("term", String.class).getOrDefault("");
         int page = ctx.queryParamAsClass("page", Integer.class).getOrDefault(1) - 1;
-        int rowsPerPage = 15;
+        int rowsPerPage = 20;
 
         PagedList<Url> pagedUrls = new QUrl()
                 .name.icontains(term)
@@ -59,7 +59,7 @@ public final class UrlController {
                 if (u.getName().equals(urlName)) {
                     ctx.sessionAttribute("flash", "Страница уже существует");
                     ctx.sessionAttribute("flash-type", "danger");
-                    ctx.redirect("/");
+                    ctx.redirect("/urls");
                     return;
                 }
             }
