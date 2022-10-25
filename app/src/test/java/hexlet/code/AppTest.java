@@ -181,7 +181,7 @@ class AppTest {
             MockResponse mockResponse = new MockResponse()
                     .addHeader("Content-Type", "text/html; charset=utf-8")
                     .addHeader("title", "Title")
-                    .setBody("hello");
+                    .setBody("h1");
             server.enqueue(mockResponse);
             server.start(6000);
 
@@ -190,8 +190,7 @@ class AppTest {
             Url url = new Url(nameUrl);
             url.save();
 
-            UrlCheck urlCheck = new UrlCheck(200, "Title", "", "hello", url);
-            urlCheck.save();
+            new UrlCheck(200, "Title", "h1", "", url).save();
 
             Url urlTest = new QUrl()
                     .name.equalTo(nameUrl)
@@ -199,11 +198,19 @@ class AppTest {
 
             String numberUrl = Long.toString(urlTest.getId());
 
-            HttpResponse<String> response = Unirest
+            HttpResponse<String> responsePost = Unirest
                     .post(baseUrl + "/urls/" + numberUrl)
+                    .asEmpty();
+
+            assertThat(responsePost.getStatus()).isEqualTo(200);
+
+
+            HttpResponse<String> response = Unirest
+                    .get(baseUrl + "/urls/" + numberUrl)
                     .asString();
             String body = response.getBody();
 
+            assertThat(mockResponse.getStatus()).contains("200");
             assertThat(body).contains(mockResponse.getHeaders().get("title"));
             assertThat(body).contains(mockResponse.getBody().readUtf8());
 
