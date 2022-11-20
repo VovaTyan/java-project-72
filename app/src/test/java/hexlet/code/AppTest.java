@@ -3,6 +3,7 @@ package hexlet.code;
 import hexlet.code.domain.Url;
 import hexlet.code.domain.UrlCheck;
 import hexlet.code.domain.query.QUrl;
+import hexlet.code.domain.query.QUrlCheck;
 import io.ebean.DB;
 import io.ebean.Database;
 import io.javalin.Javalin;
@@ -213,6 +214,62 @@ class AppTest {
             assertThat(body).contains(mockResponse.getBody().readUtf8());
 
             server.shutdown();
+        }
+    }
+
+    @Nested
+    class UrlCheckTest {
+
+        @Test
+        void testStore() throws IOException {
+            MockWebServer mockServer = new MockWebServer();
+            MockResponse mockResponse = new MockResponse()
+                    .addHeader("Content-Type", "text/html; charset=utf-8")
+                    .setBody("<title>Test page</title>/n" +
+                            "<h1>Do not expect a miracle, miracles yourself!</h1>" +
+                            "<description>statements of great people</description>");
+            mockServer.enqueue(mockResponse);
+            mockServer.start(6001);
+
+            String url = mockServer.url("/").toString().replaceAll("/$", "");
+
+            HttpResponse<String> responseAddUrl = Unirest
+                    .post(baseUrl + "/urls")
+                    .field("name", url)
+                    .asEmpty();
+
+            Url actualUrl = new QUrl()
+                    .name.equalTo(url)
+                    .findOne();
+
+            assertThat(actualUrl).isNotNull();
+            assertThat(actualUrl.getName()).isEqualTo(url);
+
+            HttpResponse<String> responseCheck = Unirest
+                    .post(baseUrl + "/urls/" + actualUrl.getId() + "/checks")
+                    .asEmpty();
+
+            assertThat(responseCheck.getStatus()).isEqualTo(200);
+
+            HttpResponse<String> response = Unirest
+                    .get(baseUrl + "/urls/" + actualUrl.getId())
+                    .asString();
+
+            assertThat(response.getStatus()).isEqualTo(200);
+
+            UrlCheck actualCheckUrl = new QUrlCheck()
+                    .url.equalTo(actualUrl)
+                    .orderBy()
+                    .createdAt.desc()
+                    .findOne();
+
+            assertThat(actualCheckUrl).isNotNull();
+            assertThat(actualCheckUrl.getStatusCode()).isEqualTo(200);
+            assertThat(actualCheckUrl.getTitle()).isEqualTo("Test page");
+            assertThat(actualCheckUrl.getH1()).isEqualTo("Do not expect a miracle, miracles yourself!");
+            assertThat(actualCheckUrl.getDescription()).isEqualTo("statements of great people");
+
+            mockServer.shutdown();
         }
     }
 }
