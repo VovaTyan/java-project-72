@@ -225,9 +225,9 @@ class AppTest {
             MockWebServer mockServer = new MockWebServer();
             MockResponse mockResponse = new MockResponse()
                     .addHeader("Content-Type", "text/html; charset=utf-8")
-                    .setBody("<title>Test page</title>/n" +
-                            "<h1>Do not expect a miracle, miracles yourself!</h1>" +
-                            "<description>statements of great people</description>");
+                    .setBody("<title>Test page</title>/n"
+                            + "<h1>Do not expect a miracle, miracles yourself!</h1>"
+                            + "<description>statements of great people</description>");
             mockServer.enqueue(mockResponse);
             mockServer.start(6001);
 
