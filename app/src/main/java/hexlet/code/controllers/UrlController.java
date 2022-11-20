@@ -20,7 +20,7 @@ public final class UrlController {
     public static Handler listUrls = ctx -> {
         String term = ctx.queryParamAsClass("term", String.class).getOrDefault("");
         int page = ctx.queryParamAsClass("page", Integer.class).getOrDefault(1) - 1;
-        int rowsPerPage = 20;
+        int rowsPerPage = 30;
 
         PagedList<Url> pagedUrls = new QUrl()
                 .name.icontains(term)
@@ -89,6 +89,8 @@ public final class UrlController {
 
         List<UrlCheck> urlChecks = new QUrlCheck()
                 .url.equalTo(url)
+                .orderBy()
+                .createdAt.desc()
                 .findList();
 
         url.setUrlChecks(urlChecks);
@@ -121,6 +123,8 @@ public final class UrlController {
 
         List<UrlCheck> urlChecks = new QUrlCheck()
                 .url.equalTo(url)
+                .orderBy()
+                .createdAt.desc()
                 .findList();
 
         url.setUrlChecks(urlChecks);
