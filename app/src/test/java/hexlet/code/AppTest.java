@@ -216,6 +216,7 @@ class AppTest {
             server.shutdown();
         }
     }
+    /*
     @Nested
     class UrlCheckTest {
 
@@ -264,4 +265,7 @@ class AppTest {
             mockServer.shutdown();
         }
     }
+
+     */
+
 }
