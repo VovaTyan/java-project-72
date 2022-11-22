@@ -1,6 +1,7 @@
 package hexlet.code.domain;
 
 import io.ebean.Model;
+import io.ebean.annotation.NotNull;
 import io.ebean.annotation.WhenCreated;
 
 import javax.persistence.Entity;
@@ -23,6 +24,7 @@ public final class UrlCheck extends Model {
 
     @Lob
     private String description;
+    @NotNull
     @ManyToOne
     private Url url;
     @WhenCreated
