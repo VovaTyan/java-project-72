@@ -60,13 +60,6 @@ class AppTest {
             assertThat(response.getStatus()).isEqualTo(200);
             assertThat(response.getBody()).contains("Анализатор страниц");
         }
-
-        @Test
-        void testAbout() {
-            HttpResponse<String> response = Unirest.get(baseUrl + "/about").asString();
-            assertThat(response.getStatus()).isEqualTo(200);
-            assertThat(response.getBody()).contains("Приложения для SEO анализа сайтов");
-        }
     }
 
     @Nested
