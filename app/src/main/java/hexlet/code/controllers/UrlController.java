@@ -128,6 +128,7 @@ public final class UrlController {
                 .findList();
 
         url.setUrlChecks(urlChecks);
+        url.save();
 
         ctx.attribute("url", url);
         ctx.attribute("urlChecks", urlChecks);

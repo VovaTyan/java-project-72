@@ -51,7 +51,6 @@ public class App {
     private static void addRoutes(Javalin app) {
 
         app.get("/", RootController.welcome);
-        app.get("/about", RootController.about);
 
         app.routes(() -> {
             path("urls", () -> {

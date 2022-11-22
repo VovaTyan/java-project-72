@@ -9,6 +9,9 @@ build:
 install:
 		make -C app install
 
+start:
+		make -C app start
+
 test:
 		make -C app test
 

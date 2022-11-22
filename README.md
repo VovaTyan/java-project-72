@@ -5,7 +5,7 @@
 [![Test Coverage](https://api.codeclimate.com/v1/badges/b71d85169227f445e0e8/test_coverage)](https://codeclimate.com/github/VovaTyan/java-project-72/test_coverage)
 # Веб-сайт на базе фреймворка Javalin для SEO анализа сайтов. Помогает вести данные в SQL Postgres в форме таблицы
 
-[Развёртывание в Railway](web-production-a198.up.railway.app)
+[Развёртывание в Railway](https://web-production-a198.up.railway.app)
 
 ### Сборка проекта:
 ```bash
