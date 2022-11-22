@@ -54,15 +54,18 @@ public final class UrlController {
             if (urlHttp.getPort() != -1) {
                 urlName = urlName + ":" + urlHttp.getPort();
             }
-            List<Url> urls = new QUrl().findList();
-            for (Url u: urls) {
-                if (u.getName().equals(urlName)) {
-                    ctx.sessionAttribute("flash", "Страница уже существует");
-                    ctx.sessionAttribute("flash-type", "danger");
-                    ctx.redirect("/urls");
-                    return;
-                }
+
+            Url inputUrl = new QUrl()
+                    .name.equalTo(urlName)
+                    .findOne();
+
+            if (inputUrl != null) {
+                ctx.sessionAttribute("flash", "Страница уже существует");
+                ctx.sessionAttribute("flash-type", "danger");
+                ctx.redirect("/");
+                return;
             }
+
             Url url = new Url(urlName);
             url.save();
         } catch (MalformedURLException E) {
