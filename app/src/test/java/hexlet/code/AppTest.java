@@ -200,7 +200,7 @@ class AppTest {
             assertThat(actualCheckUrl.getString("status_code")).isEqualTo("200");
             assertThat(actualCheckUrl.getString("title")).isEqualTo("Test page");
             assertThat(actualCheckUrl.getString("h1")).isEqualTo("Do not expect a miracle, miracles yourself!");
-            assertThat(actualCheckUrl.getString("description")).isEqualTo("statements of great people");
+            assertThat(actualCheckUrl.getString("description")).contains("statements of great people");
         }
     }
 }
