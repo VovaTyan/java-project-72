@@ -12,6 +12,7 @@ import org.jsoup.nodes.Document;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -47,7 +48,7 @@ public final class UrlController {
     };
 
     public static Handler createUrl = ctx -> {
-        String name = ctx.formParam("name");
+        String name = ctx.formParam("url");
         try {
             URL urlHttp = new URL(name);
             String urlName = urlHttp.getProtocol() + "://" + urlHttp.getHost();
@@ -116,12 +117,10 @@ public final class UrlController {
         Document document = Jsoup.connect(url.getName()).get();
 
         int statusCode = document.connection().response().statusCode();
-        //String title = document.title();
-        String title = document
-                .select("title").size() > 0 ? document.select("title").first().text() : "";
+        String title = document.title();
         String h1 = document.select("h1").size() > 0 ? document.select("h1").first().text() : "";
-        String description = document.select("description").size() > 0
-                ? document.select("description").first().text() : "";
+
+        String description = document.select("meta[name=description]").get(0).attr("content");
 
         UrlCheck urlCheck = new UrlCheck(statusCode, title, h1, description, url);
         urlCheck.save();
@@ -137,6 +136,8 @@ public final class UrlController {
 
         ctx.attribute("url", url);
         ctx.attribute("urlChecks", urlChecks);
-        ctx.render("urls/show.html");
+        ctx.sessionAttribute("flash", "Страница успешно проверена");
+        ctx.sessionAttribute("flash-type", "success");
+        ctx.redirect("urls/show.html");
     };
 }
