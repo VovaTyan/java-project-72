@@ -116,7 +116,9 @@ public final class UrlController {
         Document document = Jsoup.connect(url.getName()).get();
 
         int statusCode = document.connection().response().statusCode();
-        String title = document.title();
+        //String title = document.title();
+        String title = document
+                .select("title").size() > 0 ? document.select("title").first().text() : "";
         String h1 = document.select("h1").size() > 0 ? document.select("h1").first().text() : "";
         String description = document.select("description").size() > 0
                 ? document.select("description").first().text() : "";
