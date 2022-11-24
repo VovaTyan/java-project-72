@@ -138,6 +138,6 @@ public final class UrlController {
         ctx.sessionAttribute("flash-type", "success");
         ctx.attribute("url", url);
         ctx.attribute("urlChecks", urlChecks);
-        ctx.render("urls/show.html");
+        ctx.redirect("urls/show.html");
     };
 }
