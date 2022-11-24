@@ -118,8 +118,9 @@ public final class UrlController {
         int statusCode = document.connection().response().statusCode();
         String title = document.title();
         String h1 = document.select("h1").size() > 0 ? document.select("h1").first().text() : "";
+        String description = document.select("meta[name=description]").size() > 0
+                ? document.select("meta[name=description]").get(0).attr("content") : "";
 
-        String description = document.select("meta[name=description]").get(0).attr("content");
 
         UrlCheck urlCheck = new UrlCheck(statusCode, title, h1, description, url);
         urlCheck.save();
@@ -133,10 +134,10 @@ public final class UrlController {
         url.setUrlChecks(urlChecks);
         url.save();
 
-        ctx.attribute("url", url);
-        ctx.attribute("urlChecks", urlChecks);
         ctx.sessionAttribute("flash", "Страница успешно проверена");
         ctx.sessionAttribute("flash-type", "success");
-        ctx.redirect("urls/show.html");
+        ctx.attribute("url", url);
+        ctx.attribute("urlChecks", urlChecks);
+        ctx.render("urls/show.html");
     };
 }
