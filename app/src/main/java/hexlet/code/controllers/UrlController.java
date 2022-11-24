@@ -100,7 +100,7 @@ public final class UrlController {
 
         ctx.attribute("url", url);
         ctx.attribute("urlChecks", urlChecks);
-        ctx.render("urls/show.html");
+        ctx.render("/urls/show.html");
     };
 
     public static Handler checks = ctx -> {
@@ -136,8 +136,7 @@ public final class UrlController {
 
         ctx.sessionAttribute("flash", "Страница успешно проверена");
         ctx.sessionAttribute("flash-type", "success");
-        ctx.attribute("url", url);
-        ctx.attribute("urlChecks", urlChecks);
-        ctx.redirect("urls/show.html");
+
+        ctx.redirect("/urls/" + id);
     };
 }
